@@ -18,6 +18,7 @@ package com.example.android.dessertclicker
 
 import android.content.ActivityNotFoundException
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -25,7 +26,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import com.example.android.dessertclicker.databinding.ActivityMainBinding
-
+const val KEY_REVENUE = "revenue_key"
+const val KEY_DESSERT_SOLD = "dessert_sold_key"
 class MainActivity : AppCompatActivity() {
 
     private var revenue = 0
@@ -61,8 +63,26 @@ class MainActivity : AppCompatActivity() {
     )
     private var currentDessert = allDesserts[0]
 
+
+    override fun onStart(){
+        super.onStart()
+        Log.d("ON_START","on start message")
+
+    }
+    override fun onResume(){
+        super.onResume()
+        Log.d("ON_RESUME","on resume message")
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState != null){
+            revenue = savedInstanceState.getInt(KEY_REVENUE,0)
+            dessertsSold = savedInstanceState.getInt(KEY_DESSERT_SOLD,0)
+            showCurrentDessert()
+
+        }
         // Use Data Binding to get reference to the views
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
@@ -76,6 +96,22 @@ class MainActivity : AppCompatActivity() {
 
         // Make sure the correct dessert is showing
         binding.dessertButton.setImageResource(currentDessert.imageId)
+    }
+
+    override fun onPause() {
+        Log.d("ON_PAUSE", "on pause message")
+        super.onPause()
+    }
+
+    override fun onStop(){
+        Log.d("ON_STOP", "on stop message")
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        Log.d("ON_DESTROY","on destroy message")
+        super.onDestroy()
+
     }
 
     /**
@@ -143,5 +179,11 @@ class MainActivity : AppCompatActivity() {
             R.id.shareMenuButton -> onShare()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(KEY_REVENUE,revenue)
+        outState.putInt(KEY_DESSERT_SOLD, dessertsSold)
+        super.onSaveInstanceState(outState)
     }
 }
